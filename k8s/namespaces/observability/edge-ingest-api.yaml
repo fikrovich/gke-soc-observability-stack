@@ -6,7 +6,7 @@ metadata:
   labels:
     app: edge-ingest-api
 spec:
-  replicas: 12
+  replicas: ${EDGE_INGEST_API_REPLICAS}
   selector:
     matchLabels:
       app: edge-ingest-api

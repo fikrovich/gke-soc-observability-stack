@@ -13,6 +13,7 @@ import urllib.request
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Any, Iterable
+from urllib.parse import urlparse
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 ENV_FILE = REPO_ROOT / ".env"
@@ -21,7 +22,8 @@ PLACEHOLDER_PATTERN = re.compile(r"\$\{([A-Z0-9_]+)\}")
 
 def load_env(path: Path | None = None) -> dict[str, str]:
     env = dict(os.environ)
-    path = path or ENV_FILE
+    env_file_override = env.get("ENV_FILE")
+    path = path or (Path(env_file_override).expanduser() if env_file_override else ENV_FILE)
     if path.exists():
         for raw_line in path.read_text().splitlines():
             line = raw_line.strip()
@@ -48,6 +50,17 @@ def render_text(text: str, env: dict[str, str]) -> str:
     return rendered
 
 
+def bool_env(value: str | None, default: bool = False) -> bool:
+    if value is None:
+        return default
+    return value.strip().lower() in {"1", "true", "yes", "on"}
+
+
+def is_cluster_internal_url(url: str) -> bool:
+    host = urlparse(url).hostname or ""
+    return host.endswith(".svc") or host.endswith(".svc.cluster.local") or ".svc." in host
+
+
 def run(cmd: Iterable[str], *, check: bool = True, capture_output: bool = True, text: bool = True) -> subprocess.CompletedProcess[str]:
     return subprocess.run(list(cmd), check=check, capture_output=capture_output, text=text)
 
@@ -62,6 +75,20 @@ def kubectl_secret_value(namespace: str, name: str, key: str) -> str:
         "kubectl", "get", "secret", "-n", namespace, name, "-o", f"jsonpath={{.data.{key}}}"
     ]).stdout.strip()
     return base64.b64decode(encoded).decode()
+
+
+def resolve_elasticsearch_env(env: dict[str, str]) -> dict[str, str]:
+    resolved = dict(env)
+    resolved.setdefault("SEARCH_NAMESPACE", "observability")
+    resolved.setdefault("SEARCH_CLUSTER_NAME", "search-stack")
+    resolved.setdefault("ELASTICSEARCH_USERNAME", "elastic")
+    if not resolved.get("ELASTICSEARCH_PASSWORD"):
+        resolved["ELASTICSEARCH_PASSWORD"] = kubectl_secret_value(
+            resolved["SEARCH_NAMESPACE"],
+            f"{resolved['SEARCH_CLUSTER_NAME']}-es-elastic-user",
+            "elastic",
+        )
+    return resolved
 
 
 def write_json(path: Path, payload: Any) -> None:
@@ -93,8 +120,12 @@ def http_request(
     if insecure:
         import ssl
         context = ssl._create_unverified_context()
-    with urllib.request.urlopen(request, timeout=60, context=context) as response:
-        raw = response.read().decode()
+    try:
+        with urllib.request.urlopen(request, timeout=60, context=context) as response:
+            raw = response.read().decode()
+    except urllib.error.HTTPError as exc:
+        detail = exc.read().decode()
+        raise RuntimeError(f"HTTP {exc.code} {exc.reason} for {method.upper()} {url}: {detail}") from exc
     if not raw:
         return None
     try:

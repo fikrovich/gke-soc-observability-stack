@@ -4,20 +4,20 @@ admin:
   passwordKey: admin-password
 replicas: 1
 service:
-  type: LoadBalancer
+  type: ${GRAFANA_SERVICE_TYPE}
 persistence:
   enabled: true
-  storageClassName: standard
-  size: 10Gi
+  storageClassName: ${GRAFANA_STORAGE_CLASS}
+  size: ${GRAFANA_STORAGE}
 rbac:
   create: true
 resources:
   requests:
-    cpu: 100m
-    memory: 128Mi
+    cpu: ${GRAFANA_CPU_REQUEST}
+    memory: ${GRAFANA_MEMORY_REQUEST}
   limits:
-    cpu: 500m
-    memory: 512Mi
+    cpu: ${GRAFANA_CPU_LIMIT}
+    memory: ${GRAFANA_MEMORY_LIMIT}
 grafana.ini:
   analytics:
     check_for_updates: true

@@ -4,7 +4,7 @@ metadata:
   name: investigation-ops-api
   namespace: investigations
 spec:
-  replicas: 2
+  replicas: ${INVESTIGATION_API_REPLICAS}
   selector:
     matchLabels:
       app.kubernetes.io/name: investigation-ops

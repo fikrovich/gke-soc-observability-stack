@@ -1,33 +1,55 @@
+image:
+  registry: docker.io
+  repository: bitnamilegacy/kafka
+  tag: 4.0.0-debian-12-r10
+
 auth:
   enabled: false
+
+overrideConfiguration:
+  auto.create.topics.enable: "true"
+  default.replication.factor: 1
+  min.insync.replicas: 1
+  offsets.topic.replication.factor: 1
+  transaction.state.log.replication.factor: 1
+  transaction.state.log.min.isr: 1
+  group.initial.rebalance.delay.ms: 0
+
+defaultInitContainers:
+  volumePermissions:
+    image:
+      registry: docker.io
+      repository: bitnamilegacy/os-shell
+      tag: 12-debian-12-r51
+
 controller:
-  replicaCount: 3
-  controllerOnly: false
+  replicaCount: ${KAFKA_CONTROLLER_REPLICAS}
+  controllerOnly: ${KAFKA_CONTROLLER_ONLY}
   persistence:
     enabled: true
-    storageClass: standard-rwo
-    size: 20Gi
+    storageClass: ${KAFKA_CONTROLLER_STORAGE_CLASS}
+    size: ${KAFKA_CONTROLLER_STORAGE}
   resources:
     requests:
-      cpu: 250m
-      memory: 1Gi
+      cpu: ${KAFKA_CONTROLLER_CPU_REQUEST}
+      memory: ${KAFKA_CONTROLLER_MEMORY_REQUEST}
     limits:
-      cpu: 1
-      memory: 2Gi
+      cpu: ${KAFKA_CONTROLLER_CPU_LIMIT}
+      memory: ${KAFKA_CONTROLLER_MEMORY_LIMIT}
 broker:
-  replicaCount: 3
+  replicaCount: ${KAFKA_BROKER_REPLICAS}
   minId: 100
   persistence:
     enabled: true
-    storageClass: standard-rwo
-    size: 200Gi
+    storageClass: ${KAFKA_BROKER_STORAGE_CLASS}
+    size: ${KAFKA_BROKER_STORAGE}
   resources:
     requests:
-      cpu: 500m
-      memory: 2Gi
+      cpu: ${KAFKA_BROKER_CPU_REQUEST}
+      memory: ${KAFKA_BROKER_MEMORY_REQUEST}
     limits:
-      cpu: 2
-      memory: 4Gi
+      cpu: ${KAFKA_BROKER_CPU_LIMIT}
+      memory: ${KAFKA_BROKER_MEMORY_LIMIT}
 listeners:
   client:
     protocol: PLAINTEXT
@@ -39,3 +61,17 @@ kraft:
   enabled: true
 persistence:
   enabled: true
+
+externalAccess:
+  autoDiscovery:
+    image:
+      registry: docker.io
+      repository: bitnamilegacy/kubectl
+      tag: 1.33.4-debian-12-r0
+
+metrics:
+  jmx:
+    image:
+      registry: docker.io
+      repository: bitnamilegacy/jmx-exporter
+      tag: 1.4.0-debian-12-r0

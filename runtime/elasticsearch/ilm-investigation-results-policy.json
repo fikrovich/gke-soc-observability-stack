@@ -1,24 +1,26 @@
 {
-  "phases": {
-    "hot": {
-      "min_age": "0ms",
-      "actions": {
-        "set_priority": {
-          "priority": 100
+  "policy": {
+    "phases": {
+      "hot": {
+        "min_age": "0ms",
+        "actions": {
+          "set_priority": {
+            "priority": 100
+          }
+        }
+      },
+      "delete": {
+        "min_age": "30d",
+        "actions": {
+          "delete": {
+            "delete_searchable_snapshot": true
+          }
         }
       }
     },
-    "delete": {
-      "min_age": "30d",
-      "actions": {
-        "delete": {
-          "delete_searchable_snapshot": true
-        }
-      }
+    "_meta": {
+      "managed_by": "investigation-ops",
+      "description": "Retention policy for investigation result documents"
     }
-  },
-  "_meta": {
-    "managed_by": "investigation-ops",
-    "description": "Retention policy for investigation result documents"
   }
 }

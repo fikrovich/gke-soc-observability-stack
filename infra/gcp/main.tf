@@ -1,6 +1,7 @@
 provider "google" {
-  project = var.project_id
-  region  = var.region
+  project      = var.project_id
+  region       = var.region
+  access_token = var.access_token != "" ? var.access_token : null
 }
 
 resource "google_compute_network" "soc" {
@@ -16,13 +17,13 @@ resource "google_compute_subnetwork" "soc" {
 }
 
 resource "google_compute_router" "soc" {
-  name    = "soc-router"
+  name    = var.router_name
   region  = var.region
   network = google_compute_network.soc.id
 }
 
 resource "google_compute_router_nat" "soc" {
-  name                               = "soc-nat"
+  name                               = var.nat_name
   router                             = google_compute_router.soc.name
   region                             = var.region
   nat_ip_allocate_option             = "AUTO_ONLY"
@@ -34,6 +35,7 @@ resource "google_container_cluster" "soc" {
   location                 = var.region
   network                  = google_compute_network.soc.name
   subnetwork               = google_compute_subnetwork.soc.name
+  deletion_protection      = var.cluster_deletion_protection
   remove_default_node_pool = true
   initial_node_count       = 1
 
@@ -65,15 +67,14 @@ resource "google_container_node_pool" "master" {
   name       = "pool-es-master-zone-a"
   location   = var.region
   cluster    = google_container_cluster.soc.name
-  node_count = 3
+  node_count = var.master_node_count
 
   node_config {
-    machine_type = "n2d-standard-2"
-    disk_size_gb = 100
-    disk_type    = "pd-ssd"
+    machine_type = var.master_machine_type
+    disk_size_gb = var.master_disk_size_gb
+    disk_type    = var.master_disk_type
     labels = {
-      elasticsearch.role        = "master"
-      topology_kubernetes_io_zone = "example-region-1a"
+      "elasticsearch.role" = "master"
     }
     taint {
       key    = "elasticsearch.role"
@@ -89,17 +90,17 @@ resource "google_container_node_pool" "hot" {
   cluster  = google_container_cluster.soc.name
 
   autoscaling {
-    min_node_count = 3
-    max_node_count = 5
+    min_node_count = var.hot_min_node_count
+    max_node_count = var.hot_max_node_count
   }
 
   node_config {
-    machine_type = "n2d-standard-8"
-    disk_size_gb = 100
-    disk_type    = "pd-ssd"
+    machine_type = var.hot_machine_type
+    disk_size_gb = var.hot_disk_size_gb
+    disk_type    = var.hot_disk_type
     labels = {
-      elasticsearch.role = "data-hot"
-      data               = "hot"
+      "elasticsearch.role" = "data-hot"
+      data                 = "hot"
     }
     taint {
       key    = "elasticsearch.role"
@@ -115,17 +116,17 @@ resource "google_container_node_pool" "warm" {
   cluster  = google_container_cluster.soc.name
 
   autoscaling {
-    min_node_count = 3
-    max_node_count = 5
+    min_node_count = var.warm_min_node_count
+    max_node_count = var.warm_max_node_count
   }
 
   node_config {
-    machine_type = "n2d-standard-4"
-    disk_size_gb = 100
-    disk_type    = "pd-standard"
+    machine_type = var.warm_machine_type
+    disk_size_gb = var.warm_disk_size_gb
+    disk_type    = var.warm_disk_type
     labels = {
-      elasticsearch.role = "data-warm"
-      data               = "warm"
+      "elasticsearch.role" = "data-warm"
+      data                 = "warm"
     }
     taint {
       key    = "elasticsearch.role"
@@ -141,13 +142,13 @@ resource "google_container_node_pool" "workload" {
   cluster  = google_container_cluster.soc.name
 
   autoscaling {
-    min_node_count = 4
-    max_node_count = 12
+    min_node_count = var.workload_min_node_count
+    max_node_count = var.workload_max_node_count
   }
 
   node_config {
-    machine_type = "n2d-standard-4"
-    disk_size_gb = 100
-    disk_type    = "pd-standard"
+    machine_type = var.workload_machine_type
+    disk_size_gb = var.workload_disk_size_gb
+    disk_type    = var.workload_disk_type
   }
 }

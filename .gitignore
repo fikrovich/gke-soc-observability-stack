@@ -10,3 +10,7 @@ rendered/
 state/
 backups/
 services/investigation-service/ops/live-cluster-export/
+infra/gcp/.terraform/
+infra/gcp/.terraform.lock.hcl
+infra/gcp/*.tfstate
+infra/gcp/*.tfstate.backup

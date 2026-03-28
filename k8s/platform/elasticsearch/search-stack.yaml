@@ -1,10 +1,10 @@
 apiVersion: elasticsearch.k8s.elastic.co/v1
 kind: Elasticsearch
 metadata:
-  name: search-stack
-  namespace: observability
+  name: ${SEARCH_CLUSTER_NAME}
+  namespace: ${SEARCH_NAMESPACE}
 spec:
-  version: 8.19.8
+  version: ${ELASTICSEARCH_VERSION}
   auth: {}
   http:
     tls:
@@ -20,7 +20,7 @@ spec:
     changeBudget: {}
   nodeSets:
     - name: master
-      count: 3
+      count: ${ES_MASTER_COUNT}
       config:
         node.roles: ["master"]
       podTemplate:
@@ -37,7 +37,6 @@ spec:
                         elasticsearch.k8s.elastic.co/statefulset-name: search-stack-es-master
           nodeSelector:
             elasticsearch.role: master
-            topology.kubernetes.io/zone: example-region-1a
           tolerations:
             - key: elasticsearch.role
               operator: Equal
@@ -53,36 +52,34 @@ spec:
             - name: elasticsearch
               env:
                 - name: ES_JAVA_OPTS
-                  value: -Xms2g -Xmx2g
+                  value: ${ES_MASTER_JAVA_OPTS}
               resources:
                 requests:
-                  cpu: "1"
-                  memory: 4Gi
+                  cpu: ${ES_MASTER_CPU_REQUEST}
+                  memory: ${ES_MASTER_MEMORY_REQUEST}
                 limits:
-                  cpu: "1"
-                  memory: 4Gi
+                  cpu: ${ES_MASTER_CPU_LIMIT}
+                  memory: ${ES_MASTER_MEMORY_LIMIT}
     - name: hot
-      count: 3
+      count: ${ES_HOT_COUNT}
       config:
         indices.memory.index_buffer_size: 20%
         node.attr.data: hot
         node.roles: ["data_hot", "data_content", "ingest", "transform"]
         thread_pool.write.queue_size: 2000
-        thread_pool.write.size: 6
       volumeClaimTemplates:
         - metadata:
             name: elasticsearch-data
           spec:
             accessModes: ["ReadWriteOnce"]
-            storageClassName: premium-rwo
+            storageClassName: ${ES_HOT_STORAGE_CLASS}
             resources:
               requests:
-                storage: 2300Gi
+                storage: ${ES_HOT_STORAGE}
       podTemplate:
         spec:
           nodeSelector:
             elasticsearch.role: data-hot
-            topology.kubernetes.io/zone: example-region-1a
           tolerations:
             - key: elasticsearch.role
               operator: Equal
@@ -102,16 +99,16 @@ spec:
             - name: elasticsearch
               env:
                 - name: ES_JAVA_OPTS
-                  value: -Xms14g -Xmx14g
+                  value: ${ES_HOT_JAVA_OPTS}
               resources:
                 requests:
-                  cpu: "6"
-                  memory: 26Gi
+                  cpu: ${ES_HOT_CPU_REQUEST}
+                  memory: ${ES_HOT_MEMORY_REQUEST}
                 limits:
-                  cpu: "6"
-                  memory: 26Gi
+                  cpu: ${ES_HOT_CPU_LIMIT}
+                  memory: ${ES_HOT_MEMORY_LIMIT}
     - name: warm
-      count: 3
+      count: ${ES_WARM_COUNT}
       config:
         node.attr.data: warm
         node.roles: ["data_warm"]
@@ -120,15 +117,14 @@ spec:
             name: elasticsearch-data
           spec:
             accessModes: ["ReadWriteOnce"]
-            storageClassName: standard
+            storageClassName: ${ES_WARM_STORAGE_CLASS}
             resources:
               requests:
-                storage: 4000Gi
+                storage: ${ES_WARM_STORAGE}
       podTemplate:
         spec:
           nodeSelector:
             elasticsearch.role: data-warm
-            topology.kubernetes.io/zone: example-region-1a
           tolerations:
             - key: elasticsearch.role
               operator: Equal
@@ -148,11 +144,11 @@ spec:
             - name: elasticsearch
               env:
                 - name: ES_JAVA_OPTS
-                  value: -Xms6g -Xmx6g
+                  value: ${ES_WARM_JAVA_OPTS}
               resources:
                 requests:
-                  cpu: "2"
-                  memory: 12Gi
+                  cpu: ${ES_WARM_CPU_REQUEST}
+                  memory: ${ES_WARM_MEMORY_REQUEST}
                 limits:
-                  cpu: "2"
-                  memory: 12Gi
+                  cpu: ${ES_WARM_CPU_LIMIT}
+                  memory: ${ES_WARM_MEMORY_LIMIT}

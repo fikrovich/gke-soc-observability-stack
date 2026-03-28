@@ -4,7 +4,7 @@ metadata:
   name: investigation-ops-worker
   namespace: investigations
 spec:
-  replicas: 1
+  replicas: ${INVESTIGATION_WORKER_REPLICAS}
   selector:
     matchLabels:
       app.kubernetes.io/name: investigation-ops
@@ -49,6 +49,12 @@ spec:
               port: http
             initialDelaySeconds: 10
             periodSeconds: 15
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            failureThreshold: 60
+            periodSeconds: 5
           readinessProbe:
             httpGet:
               path: /readyz

@@ -6,7 +6,7 @@ metadata:
   labels:
     app: edge-ingest-worker
 spec:
-  replicas: 24
+  replicas: ${EDGE_INGEST_WORKER_REPLICAS}
   selector:
     matchLabels:
       app: edge-ingest-worker
@@ -84,6 +84,12 @@ spec:
               port: 8080
             initialDelaySeconds: 10
             periodSeconds: 30
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            failureThreshold: 60
+            periodSeconds: 5
           readinessProbe:
             httpGet:
               path: /health

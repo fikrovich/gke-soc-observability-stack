@@ -1,10 +1,13 @@
 project_id        = "example-observability"
 region            = "example-region-1"
 cluster_name      = "observability-cluster"
+cluster_deletion_protection = false
 network_name      = "platform-net"
 subnet_name       = "platform-subnet"
 subnet_cidr       = "10.10.0.0/16"
 master_ipv4_cidr  = "172.16.0.0/28"
+router_name       = "platform-router"
+nat_name          = "platform-nat"
 
 authorized_networks = [
   {
@@ -12,3 +15,23 @@ authorized_networks = [
     cidr_block   = "203.0.113.10/32"
   }
 ]
+
+master_node_count      = 1
+master_machine_type    = "n2d-standard-2"
+master_disk_size_gb    = 50
+master_disk_type       = "pd-standard"
+hot_min_node_count     = 1
+hot_max_node_count     = 1
+hot_machine_type       = "e2-standard-4"
+hot_disk_size_gb       = 80
+hot_disk_type          = "pd-standard"
+warm_min_node_count    = 1
+warm_max_node_count    = 1
+warm_machine_type      = "e2-standard-4"
+warm_disk_size_gb      = 80
+warm_disk_type         = "pd-standard"
+workload_min_node_count = 1
+workload_max_node_count = 2
+workload_machine_type   = "e2-standard-4"
+workload_disk_size_gb   = 80
+workload_disk_type      = "pd-standard"

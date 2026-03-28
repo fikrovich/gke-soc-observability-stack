@@ -1,17 +1,17 @@
 apiVersion: kibana.k8s.elastic.co/v1
 kind: Kibana
 metadata:
-  name: kibana
-  namespace: observability
+  name: ${SEARCH_UI_NAME}
+  namespace: ${SEARCH_NAMESPACE}
 spec:
-  version: 8.19.8
-  count: 2
+  version: ${ELASTICSEARCH_VERSION}
+  count: ${KIBANA_COUNT}
   elasticsearchRef:
-    name: search-stack
+    name: ${SEARCH_CLUSTER_NAME}
   http:
     service:
       spec:
-        type: LoadBalancer
+        type: ${KIBANA_SERVICE_TYPE}
     tls:
       certificate: {}
   monitoring:
@@ -35,8 +35,8 @@ spec:
         - name: kibana
           resources:
             requests:
-              cpu: "1"
-              memory: 1Gi
+              cpu: ${KIBANA_CPU_REQUEST}
+              memory: ${KIBANA_MEMORY_REQUEST}
             limits:
-              cpu: "2"
-              memory: 2Gi
+              cpu: ${KIBANA_CPU_LIMIT}
+              memory: ${KIBANA_MEMORY_LIMIT}
