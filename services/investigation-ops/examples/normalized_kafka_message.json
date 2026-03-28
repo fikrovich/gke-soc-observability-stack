@@ -1,0 +1,74 @@
+{
+  "schema_version": "v1",
+  "job_id": "4c85e2b273c9fc8c095f7c98",
+  "incident_id": "d7dcd2b7f481ab69fa65",
+  "received_at": "2026-03-14T10:05:00Z",
+  "source": "grafana",
+  "alert": {
+    "source": "grafana",
+    "source_receiver": "investigations",
+    "status": "firing",
+    "alert_name": "Request Volume Anomaly",
+    "environment": "production",
+    "service": "edge",
+    "severity": "critical",
+    "datasource": "elasticsearch",
+    "fingerprint": "abcd1234",
+    "starts_at": "2026-03-14T10:00:00Z",
+    "ends_at": "2026-03-14T10:20:00Z",
+    "generator_url": "https://grafana.example.invalid/alerting/grafana/abcd/view",
+    "dashboard_url": "https://grafana.example.invalid/d/request-volume",
+    "panel_url": "https://grafana.example.invalid/d/request-volume?viewPanel=7",
+    "labels": {
+      "alertname": "Request Volume Anomaly",
+      "environment": "production",
+      "service": "edge",
+      "severity": "critical",
+      "datasource": "elasticsearch",
+      "route": "/critical-path",
+      "route_uri": "/critical-path?account_id=acct-780861&device_id=device-123",
+      "src_ip": "203.0.113.10",
+      "asn": "AS64512"
+    },
+    "annotations": {
+      "summary": "Request volume spiked on /critical-path from 203.0.113.10 and AS64512.",
+      "device_id": "device-123",
+      "session_id": "session-xyz"
+    },
+    "values": {
+      "A": 1200
+    }
+  },
+  "time_window": {
+    "start": "2026-03-14T09:45:00Z",
+    "end": "2026-03-14T10:15:00Z",
+    "baseline_start": "2026-03-14T08:15:00Z",
+    "baseline_end": "2026-03-14T09:45:00Z",
+    "baseline_windows": 6
+  },
+  "entity_hints": {
+    "ip_addresses": [
+      "203.0.113.10"
+    ],
+    "routes": [
+      "/critical-path"
+    ],
+    "account_ids": [
+      "acct-780861"
+    ],
+    "device_ids": [
+      "device-123"
+    ],
+    "asns": [
+      64512
+    ],
+    "user_agents": [],
+    "client_ids": [],
+    "session_ids": [
+      "session-xyz"
+    ]
+  },
+  "playbook_id": "request_volume_anomaly",
+  "fingerprint": "abcd1234",
+  "raw_payload_hash": "payload-hash"
+}

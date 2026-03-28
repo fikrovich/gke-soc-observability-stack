@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: edge-worker-index-template
+  namespace: observability
+data:
+  template.json: |
+    {
+      "index_patterns": ["logs-edge.worker-production-*"],
+      "template": {
+        "settings": {
+          "number_of_shards": 1,
+          "number_of_replicas": 1,
+          "index.codec": "best_compression"
+        },
+        "mappings": {
+          "properties": {
+            "@timestamp": { "type": "date" },
+            "RayID": { "type": "keyword" },
+            "ClientIP": { "type": "ip" },
+            "ClientCountry": { "type": "keyword" },
+            "ClientRequestMethod": { "type": "keyword" },
+            "ClientRequestPath": { "type": "keyword" },
+            "ClientRequestUserAgent": { "type": "text" },
+            "EdgeResponseStatus": { "type": "integer" },
+            "RequestHeaders": { "type": "object", "enabled": true },
+            "ResponseHeaders": { "type": "object", "enabled": true },
+            "RequestBody": { "type": "object", "enabled": true },
+            "ResponseBody": { "type": "object", "enabled": true },
+            "logpush": {
+              "properties": {
+                "waf_action": { "type": "keyword" },
+                "waf_rule_id": { "type": "keyword" },
+                "waf_matched_var": { "type": "keyword" },
+                "waf_attack_score": { "type": "integer" },
+                "security_action": { "type": "keyword" },
+                "security_rule_id": { "type": "keyword" },
+                "security_rule_ids": { "type": "keyword" },
+                "edge_pathing_status": { "type": "keyword" },
+                "origin_response_time": { "type": "integer" },
+                "bot_score": { "type": "integer" }
+              }
+            },
+            "Tags": { "type": "keyword" }
+          }
+        }
+      }
+    }

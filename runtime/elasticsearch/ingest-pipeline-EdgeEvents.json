@@ -1,0 +1,30 @@
+{
+  "description": "Process EdgeEvents logs - map EdgeStartTimestamp to @timestamp",
+  "processors": [
+    {
+      "json": {
+        "ignore_failure": true,
+        "field": "message",
+        "add_to_root": true
+      }
+    },
+    {
+      "date": {
+        "formats": [
+          "ISO8601",
+          "UNIX",
+          "UNIX_MS"
+        ],
+        "field": "EdgeStartTimestamp",
+        "target_field": "@timestamp"
+      }
+    },
+    {
+      "remove": {
+        "ignore_failure": true,
+        "ignore_missing": true,
+        "field": "message"
+      }
+    }
+  ]
+}

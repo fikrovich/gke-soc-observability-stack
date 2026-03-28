@@ -1,0 +1,56 @@
+[
+  {
+    "uid": "edge-logs-es",
+    "name": "elasticsearch",
+    "type": "elasticsearch",
+    "access": "proxy",
+    "url": "${ELASTICSEARCH_URL}",
+    "basicAuth": true,
+    "basicAuthUser": "${ELASTICSEARCH_USERNAME}",
+    "isDefault": true,
+    "jsonData": {
+      "includeFrozen": false,
+      "index": "edge-logs-*",
+      "maxConcurrentShardRequests": 5,
+      "timeField": "@timestamp",
+      "timeInterval": "5s",
+      "tlsSkipVerify": true
+    },
+    "secureJsonData": {
+      "basicAuthPassword": "${ELASTICSEARCH_PASSWORD}"
+    }
+  },
+  {
+    "uid": "investigation-results-es",
+    "name": "investigation-results",
+    "type": "elasticsearch",
+    "access": "proxy",
+    "url": "${ELASTICSEARCH_URL}",
+    "basicAuth": true,
+    "basicAuthUser": "${ELASTICSEARCH_USERNAME}",
+    "isDefault": false,
+    "jsonData": {
+      "includeFrozen": false,
+      "index": "investigation-results-v1",
+      "maxConcurrentShardRequests": 5,
+      "timeField": "processed_at",
+      "tlsSkipVerify": true
+    },
+    "secureJsonData": {
+      "basicAuthPassword": "${ELASTICSEARCH_PASSWORD}"
+    }
+  },
+  {
+    "uid": "prometheus-primary",
+    "name": "Prometheus",
+    "type": "prometheus",
+    "access": "proxy",
+    "url": "${PROMETHEUS_URL}",
+    "basicAuth": false,
+    "isDefault": false,
+    "jsonData": {
+      "httpMethod": "POST",
+      "timeInterval": "30s"
+    }
+  }
+]

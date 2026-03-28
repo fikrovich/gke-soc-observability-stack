@@ -1,0 +1,43 @@
+{
+  "receiver": "investigations",
+  "status": "firing",
+  "alerts": [
+    {
+      "status": "firing",
+      "labels": {
+        "alertname": "Request Volume Anomaly",
+        "environment": "production",
+        "service": "edge",
+        "severity": "critical",
+        "datasource": "elasticsearch",
+        "route": "/critical-path",
+        "src_ip": "203.0.113.10",
+        "asn": "AS64512"
+      },
+      "annotations": {
+        "summary": "Request volume spiked on /critical-path from 203.0.113.10 and AS64512.",
+        "device_id": "device-123",
+        "session_id": "session-xyz"
+      },
+      "startsAt": "2026-03-14T10:00:00Z",
+      "endsAt": "2026-03-14T10:20:00Z",
+      "generatorURL": "https://grafana.example.invalid/alerting/grafana/abcd/view",
+      "fingerprint": "abcd1234",
+      "dashboardURL": "https://grafana.example.invalid/d/request-volume",
+      "panelURL": "https://grafana.example.invalid/d/request-volume?viewPanel=7",
+      "values": {
+        "A": 1200
+      },
+      "valueString": "A=1200"
+    }
+  ],
+  "groupLabels": {
+    "alertname": "Request Volume Anomaly"
+  },
+  "commonLabels": {},
+  "commonAnnotations": {},
+  "externalURL": "https://grafana.example.invalid/",
+  "version": "1",
+  "groupKey": "{}:{}",
+  "truncatedAlerts": 0
+}

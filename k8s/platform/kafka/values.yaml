@@ -1,0 +1,41 @@
+auth:
+  enabled: false
+controller:
+  replicaCount: 3
+  controllerOnly: false
+  persistence:
+    enabled: true
+    storageClass: standard-rwo
+    size: 20Gi
+  resources:
+    requests:
+      cpu: 250m
+      memory: 1Gi
+    limits:
+      cpu: 1
+      memory: 2Gi
+broker:
+  replicaCount: 3
+  minId: 100
+  persistence:
+    enabled: true
+    storageClass: standard-rwo
+    size: 200Gi
+  resources:
+    requests:
+      cpu: 500m
+      memory: 2Gi
+    limits:
+      cpu: 2
+      memory: 4Gi
+listeners:
+  client:
+    protocol: PLAINTEXT
+  controller:
+    protocol: PLAINTEXT
+  interbroker:
+    protocol: PLAINTEXT
+kraft:
+  enabled: true
+persistence:
+  enabled: true

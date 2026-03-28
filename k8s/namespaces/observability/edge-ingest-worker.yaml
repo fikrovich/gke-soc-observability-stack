@@ -1,0 +1,99 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: edge-ingest-worker
+  namespace: observability
+  labels:
+    app: edge-ingest-worker
+spec:
+  replicas: 24
+  selector:
+    matchLabels:
+      app: edge-ingest-worker
+  template:
+    metadata:
+      labels:
+        app: edge-ingest-worker
+    spec:
+      containers:
+        - name: ingest
+          image: ${EDGE_INGEST_WORKER_IMAGE}
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8080
+          env:
+            - name: LOG_LEVEL
+              value: INFO
+            - name: INGEST_MODE
+              value: kafka
+            - name: PROCESSOR_ENABLED
+              value: "true"
+            - name: BATCH_SIZE
+              value: "60"
+            - name: MAX_CONCURRENT_BATCHES
+              value: "8"
+            - name: ES_TIMEOUT
+              value: "8"
+            - name: ES_MAX_RETRIES
+              value: "1"
+            - name: BACKOFF_BASE
+              value: "1.0"
+            - name: AUTH_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: edge-ingest-secret
+                  key: auth-token
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: kafka.kafka.svc.cluster.local:9092
+            - name: KAFKA_TOPIC
+              value: edge-logpush
+            - name: KAFKA_DLQ_TOPIC
+              value: edge-logpush-dlq
+            - name: KAFKA_GROUP_ID
+              value: edge-logpush-workers
+            - name: KAFKA_PRODUCER_MAX_REQUEST_SIZE
+              value: "52428800"
+            - name: KAFKA_CONSUMER_MAX_PARTITION_FETCH_BYTES
+              value: "52428800"
+            - name: ES_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: edge-ingest-config
+                  key: ES_HOST
+            - name: ES_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: edge-ingest-config
+                  key: ES_USER
+            - name: ES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: edge-ingest-secret
+                  key: es-password
+            - name: ES_INDEX
+              valueFrom:
+                configMapKeyRef:
+                  name: edge-ingest-config
+                  key: ES_INDEX
+            - name: KAFKA_MAX_POLL_INTERVAL_MS
+              value: "900000"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 500m
+              memory: 1Gi
+            limits:
+              cpu: "2"
+              memory: 4Gi

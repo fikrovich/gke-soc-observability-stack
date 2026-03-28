@@ -1,0 +1,28 @@
+{
+  "index_patterns": [
+    "investigation-results-v1*"
+  ],
+  "priority": 500,
+  "_meta": {
+    "description": "Template for investigation result indices",
+    "managed_by": "investigation-ops"
+  },
+  "template": {
+    "settings": {
+      "index": {
+        "lifecycle": {
+          "name": "investigation-results-policy"
+        },
+        "number_of_shards": "1",
+        "number_of_replicas": "1",
+        "routing": {
+          "allocation": {
+            "include": {
+              "_tier_preference": "data_content"
+            }
+          }
+        }
+      }
+    }
+  }
+}

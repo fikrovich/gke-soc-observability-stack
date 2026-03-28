@@ -1,0 +1,162 @@
+[
+  {
+    "uid": "platform-ingest-lag-high",
+    "orgID": 1,
+    "folderUID": "platform-signals",
+    "ruleGroup": "platform-signals",
+    "title": "Ingest Queue Lag High",
+    "condition": "B",
+    "data": [
+      {
+        "refId": "A",
+        "queryType": "",
+        "relativeTimeRange": {
+          "from": 300,
+          "to": 0
+        },
+        "datasourceUid": "prometheus-primary",
+        "model": {
+          "editorMode": "code",
+          "expr": "sum(kafka_consumergroup_lag{consumergroup=~\".*edge.*|.*investigation.*\"})",
+          "intervalMs": 1000,
+          "legendFormat": "lag",
+          "maxDataPoints": 43200,
+          "range": true,
+          "refId": "A"
+        }
+      },
+      {
+        "refId": "B",
+        "queryType": "",
+        "relativeTimeRange": {
+          "from": 300,
+          "to": 0
+        },
+        "datasourceUid": "__expr__",
+        "model": {
+          "conditions": [
+            {
+              "evaluator": {
+                "params": [10000],
+                "type": "gt"
+              },
+              "operator": {
+                "type": "and"
+              },
+              "query": {
+                "params": ["A"]
+              },
+              "reducer": {
+                "params": [],
+                "type": "last"
+              }
+            }
+          ],
+          "datasource": {
+            "type": "__expr__",
+            "uid": "__expr__"
+          },
+          "expression": "A",
+          "intervalMs": 1000,
+          "maxDataPoints": 43200,
+          "refId": "B",
+          "type": "threshold"
+        }
+      }
+    ],
+    "noDataState": "OK",
+    "execErrState": "Alerting",
+    "for": "5m",
+    "keep_firing_for": "0s",
+    "annotations": {
+      "summary": "Consumer lag stayed above the public example threshold for five minutes.",
+      "description": "Use this sample rule as a starting point for queue lag alerting. Tune the metric selector, threshold, and routing for your own environment.",
+      "runbook": "Check queue backlog, consumer health, and downstream indexing throughput before scaling consumers or changing write settings."
+    },
+    "labels": {
+      "category": "platform-reliability",
+      "severity": "warning"
+    },
+    "isPaused": false
+  },
+  {
+    "uid": "platform-search-unassigned-shards",
+    "orgID": 1,
+    "folderUID": "platform-signals",
+    "ruleGroup": "platform-signals",
+    "title": "Search Cluster Unassigned Shards",
+    "condition": "B",
+    "data": [
+      {
+        "refId": "A",
+        "queryType": "",
+        "relativeTimeRange": {
+          "from": 300,
+          "to": 0
+        },
+        "datasourceUid": "prometheus-primary",
+        "model": {
+          "editorMode": "code",
+          "expr": "elasticsearch_cluster_health_unassigned_shards",
+          "intervalMs": 1000,
+          "legendFormat": "unassigned",
+          "maxDataPoints": 43200,
+          "range": true,
+          "refId": "A"
+        }
+      },
+      {
+        "refId": "B",
+        "queryType": "",
+        "relativeTimeRange": {
+          "from": 300,
+          "to": 0
+        },
+        "datasourceUid": "__expr__",
+        "model": {
+          "conditions": [
+            {
+              "evaluator": {
+                "params": [0],
+                "type": "gt"
+              },
+              "operator": {
+                "type": "and"
+              },
+              "query": {
+                "params": ["A"]
+              },
+              "reducer": {
+                "params": [],
+                "type": "last"
+              }
+            }
+          ],
+          "datasource": {
+            "type": "__expr__",
+            "uid": "__expr__"
+          },
+          "expression": "A",
+          "intervalMs": 1000,
+          "maxDataPoints": 43200,
+          "refId": "B",
+          "type": "threshold"
+        }
+      }
+    ],
+    "noDataState": "OK",
+    "execErrState": "Alerting",
+    "for": "10m",
+    "keep_firing_for": "0s",
+    "annotations": {
+      "summary": "The search cluster reports unassigned shards.",
+      "description": "This public example highlights the kind of cluster-health signal that should block assumptions about ingest freshness.",
+      "runbook": "Inspect shard allocation constraints, tier capacity, and recent node or storage events before forcing allocation changes."
+    },
+    "labels": {
+      "category": "platform-reliability",
+      "severity": "critical"
+    },
+    "isPaused": false
+  }
+]

@@ -1,0 +1,59 @@
+id: session_reuse_anomaly
+description: Investigate a session or token reused across an unusually broad set of sources.
+analysis_mode: generic
+match:
+  alert_name_contains:
+    - session reuse anomaly
+    - session spread anomaly
+    - token reuse anomaly
+  service_in: []
+  label_equals: {}
+  annotation_contains:
+    summary:
+      - session reuse
+window:
+  lookback_minutes: 60
+  lookahead_minutes: 5
+baseline:
+  window_minutes: 60
+  offset_windows: 6
+indices:
+  - edge-logs
+filters:
+  - canonical_field: session_id
+    operator: entity_hint
+    required: true
+field_mappings:
+  timestamp: "@timestamp"
+  client_ip: "ClientIP.keyword"
+  asn: "ClientASN"
+  path: "ClientRequestPath.keyword"
+  uri: "ClientRequestURI.keyword"
+  user_agent: "ClientRequestUserAgent.keyword"
+  edge_status: "EdgeResponseStatus"
+  origin_status: "OriginResponseStatus"
+  security_action: "SecurityAction.keyword"
+  security_actions: "SecurityActions.keyword"
+  security_rule_description: "SecurityRuleDescription.keyword"
+  device_id: "RequestHeaders.device-uid.keyword"
+  account_id: "RequestHeaders.account-id.keyword"
+  client_hint: "RequestHeaders.client-id.keyword"
+  session_id: "RequestHeaders.session-id.keyword"
+  access_user: "RequestHeaders.ed-access-user.keyword"
+feature_flags:
+  device_concentration: true
+  client_hint_concentration: true
+  session_concentration: true
+  unique_accounts_per_ip: false
+  unique_devices_per_account: false
+  unique_devices_per_ip: false
+  unique_ips_per_device: false
+  unique_ips_per_session: true
+  new_account_ratio: false
+  challenge_outcome_distribution: false
+recommended_mitigations:
+  - Validate whether the session spread is expected before invalidating the session or token.
+  - Correlate the session with device and account context before broader controls.
+recommended_query_templates:
+  - '{session_id_field}:"{top_session_id}" and {client_ip_field}:*'
+  - '{session_id_field}:"{top_session_id}" and {device_id_field}:*'

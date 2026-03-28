@@ -1,0 +1,30 @@
+[
+  {
+    "name": "edge-logpush",
+    "partitions": 24,
+    "replication_factor": 3,
+    "configs": {
+      "retention.ms": "14400000",
+      "retention.bytes": "2147483648",
+      "segment.ms": "3600000",
+      "segment.bytes": "268435456"
+    }
+  },
+  {
+    "name": "edge-logpush-dlq",
+    "partitions": 6,
+    "replication_factor": 3,
+    "configs": {
+      "retention.ms": "14400000",
+      "retention.bytes": "1073741824",
+      "segment.ms": "3600000",
+      "segment.bytes": "268435456"
+    }
+  },
+  {
+    "name": "investigations",
+    "partitions": 6,
+    "replication_factor": 3,
+    "configs": {}
+  }
+]

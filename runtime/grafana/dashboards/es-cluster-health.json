@@ -1,0 +1,85 @@
+{
+  "meta": {
+    "folderUid": "platform-signals"
+  },
+  "dashboard": {
+    "id": null,
+    "uid": "es-cluster-health",
+    "title": "Elasticsearch Cluster Health",
+    "tags": ["elasticsearch", "platform", "health"],
+    "timezone": "browser",
+    "schemaVersion": 39,
+    "version": 1,
+    "refresh": "30s",
+    "time": {
+      "from": "now-6h",
+      "to": "now"
+    },
+    "panels": [
+      {
+        "id": 1,
+        "type": "row",
+        "title": "Cluster Overview",
+        "gridPos": {"h": 1, "w": 24, "x": 0, "y": 0},
+        "collapsed": false,
+        "panels": []
+      },
+      {
+        "id": 2,
+        "type": "stat",
+        "title": "Cluster Status",
+        "gridPos": {"h": 4, "w": 6, "x": 0, "y": 1},
+        "datasource": {"type": "prometheus", "uid": "prometheus-primary"},
+        "targets": [{"refId": "A", "expr": "elasticsearch_cluster_health_status{color=\"green\"}", "instant": true}],
+        "fieldConfig": {"defaults": {"mappings": [{"type": "value", "options": {"0": {"text": "RED / YELLOW"}, "1": {"text": "GREEN"}}}]}}
+      },
+      {
+        "id": 3,
+        "type": "stat",
+        "title": "Total Nodes",
+        "gridPos": {"h": 4, "w": 6, "x": 6, "y": 1},
+        "datasource": {"type": "prometheus", "uid": "prometheus-primary"},
+        "targets": [{"refId": "A", "expr": "elasticsearch_cluster_health_number_of_nodes", "instant": true}]
+      },
+      {
+        "id": 4,
+        "type": "stat",
+        "title": "Data Nodes",
+        "gridPos": {"h": 4, "w": 6, "x": 12, "y": 1},
+        "datasource": {"type": "prometheus", "uid": "prometheus-primary"},
+        "targets": [{"refId": "A", "expr": "elasticsearch_cluster_health_number_of_data_nodes", "instant": true}]
+      },
+      {
+        "id": 5,
+        "type": "stat",
+        "title": "Unassigned Shards",
+        "gridPos": {"h": 4, "w": 6, "x": 18, "y": 1},
+        "datasource": {"type": "prometheus", "uid": "prometheus-primary"},
+        "targets": [{"refId": "A", "expr": "elasticsearch_cluster_health_unassigned_shards", "instant": true}]
+      },
+      {
+        "id": 6,
+        "type": "timeseries",
+        "title": "Cluster Status History",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 5},
+        "datasource": {"type": "prometheus", "uid": "prometheus-primary"},
+        "targets": [
+          {"refId": "A", "expr": "elasticsearch_cluster_health_status{color=\"green\"}", "legendFormat": "green"},
+          {"refId": "B", "expr": "elasticsearch_cluster_health_status{color=\"yellow\"}", "legendFormat": "yellow"},
+          {"refId": "C", "expr": "elasticsearch_cluster_health_status{color=\"red\"}", "legendFormat": "red"}
+        ]
+      },
+      {
+        "id": 7,
+        "type": "timeseries",
+        "title": "Shard Allocation Pressure",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 5},
+        "datasource": {"type": "prometheus", "uid": "prometheus-primary"},
+        "targets": [
+          {"refId": "A", "expr": "elasticsearch_cluster_health_relocating_shards", "legendFormat": "relocating"},
+          {"refId": "B", "expr": "elasticsearch_cluster_health_number_of_pending_tasks", "legendFormat": "pending tasks"}
+        ]
+      }
+    ]
+  }
+}

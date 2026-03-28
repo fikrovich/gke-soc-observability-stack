@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: edge-ingest-api
+  namespace: observability
+  labels:
+    app: edge-ingest-api
+spec:
+  replicas: 12
+  selector:
+    matchLabels:
+      app: edge-ingest-api
+  template:
+    metadata:
+      labels:
+        app: edge-ingest-api
+    spec:
+      containers:
+        - name: ingest
+          image: ${EDGE_INGEST_API_IMAGE}
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8080
+          env:
+            - name: LOG_LEVEL
+              value: INFO
+            - name: INGEST_MODE
+              value: kafka
+            - name: PROCESSOR_ENABLED
+              value: "false"
+            - name: AUTH_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: edge-ingest-secret
+                  key: auth-token
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: kafka.kafka.svc.cluster.local:9092
+            - name: KAFKA_TOPIC
+              value: edge-logpush
+            - name: KAFKA_DLQ_TOPIC
+              value: edge-logpush-dlq
+            - name: KAFKA_GROUP_ID
+              value: edge-logpush-workers
+            - name: KAFKA_PRODUCER_MAX_REQUEST_SIZE
+              value: "52428800"
+            - name: ES_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: edge-ingest-config
+                  key: ES_HOST
+            - name: ES_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: edge-ingest-config
+                  key: ES_USER
+            - name: ES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: edge-ingest-secret
+                  key: es-password
+            - name: ES_INDEX
+              valueFrom:
+                configMapKeyRef:
+                  name: edge-ingest-config
+                  key: ES_INDEX
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 200m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi

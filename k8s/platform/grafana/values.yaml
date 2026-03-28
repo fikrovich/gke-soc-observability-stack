@@ -1,0 +1,25 @@
+admin:
+  existingSecret: grafana
+  userKey: admin-user
+  passwordKey: admin-password
+replicas: 1
+service:
+  type: LoadBalancer
+persistence:
+  enabled: true
+  storageClassName: standard
+  size: 10Gi
+rbac:
+  create: true
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+grafana.ini:
+  analytics:
+    check_for_updates: true
+  log:
+    mode: console

@@ -1,0 +1,12 @@
+.env
+.env.*
+!.env.example
+*.pyc
+__pycache__/
+.pytest_cache/
+.venv/
+.DS_Store
+rendered/
+state/
+backups/
+services/investigation-service/ops/live-cluster-export/

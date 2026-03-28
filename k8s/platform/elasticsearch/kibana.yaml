@@ -1,0 +1,42 @@
+apiVersion: kibana.k8s.elastic.co/v1
+kind: Kibana
+metadata:
+  name: kibana
+  namespace: observability
+spec:
+  version: 8.19.8
+  count: 2
+  elasticsearchRef:
+    name: search-stack
+  http:
+    service:
+      spec:
+        type: LoadBalancer
+    tls:
+      certificate: {}
+  monitoring:
+    logs: {}
+    metrics: {}
+  config:
+    monitoring.ui.ccs.enabled: false
+    xpack.security.authc.providers:
+      basic:
+        basic1:
+          enabled: true
+          order: 0
+  podTemplate:
+    spec:
+      tolerations:
+        - key: role
+          operator: Equal
+          value: data
+          effect: NoSchedule
+      containers:
+        - name: kibana
+          resources:
+            requests:
+              cpu: "1"
+              memory: 1Gi
+            limits:
+              cpu: "2"
+              memory: 2Gi

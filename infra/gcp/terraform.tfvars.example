@@ -1,0 +1,14 @@
+project_id        = "example-observability"
+region            = "example-region-1"
+cluster_name      = "observability-cluster"
+network_name      = "platform-net"
+subnet_name       = "platform-subnet"
+subnet_cidr       = "10.10.0.0/16"
+master_ipv4_cidr  = "172.16.0.0/28"
+
+authorized_networks = [
+  {
+    display_name = "office"
+    cidr_block   = "203.0.113.10/32"
+  }
+]

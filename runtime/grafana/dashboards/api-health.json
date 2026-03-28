@@ -1,0 +1,115 @@
+{
+  "meta": {
+    "folderUid": "platform-signals"
+  },
+  "dashboard": {
+    "id": null,
+    "uid": "api-health",
+    "title": "API Health Monitor",
+    "tags": ["api-health", "platform", "ingest"],
+    "timezone": "browser",
+    "schemaVersion": 39,
+    "version": 1,
+    "refresh": "30s",
+    "time": {
+      "from": "now-24h",
+      "to": "now"
+    },
+    "panels": [
+      {
+        "id": 1,
+        "type": "row",
+        "title": "API Signals",
+        "gridPos": {"h": 1, "w": 24, "x": 0, "y": 0},
+        "collapsed": false,
+        "panels": []
+      },
+      {
+        "id": 2,
+        "type": "timeseries",
+        "title": "Total Requests",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 1},
+        "datasource": {"type": "elasticsearch", "uid": "edge-logs-es"},
+        "targets": [
+          {
+            "refId": "A",
+            "datasource": {"type": "elasticsearch", "uid": "edge-logs-es"},
+            "query": "*",
+            "timeField": "@timestamp",
+            "metrics": [{"id": "1", "type": "count"}],
+            "bucketAggs": [{"id": "2", "type": "date_histogram", "field": "@timestamp", "settings": {"interval": "1m", "min_doc_count": "0"}}]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "type": "timeseries",
+        "title": "Status Class Breakdown",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 1},
+        "datasource": {"type": "elasticsearch", "uid": "edge-logs-es"},
+        "targets": [
+          {
+            "refId": "A",
+            "alias": "2xx",
+            "datasource": {"type": "elasticsearch", "uid": "edge-logs-es"},
+            "query": "EdgeResponseStatus:[200 TO 299]",
+            "timeField": "@timestamp",
+            "metrics": [{"id": "1", "type": "count"}],
+            "bucketAggs": [{"id": "2", "type": "date_histogram", "field": "@timestamp", "settings": {"interval": "1m", "min_doc_count": "0"}}]
+          },
+          {
+            "refId": "B",
+            "alias": "4xx",
+            "datasource": {"type": "elasticsearch", "uid": "edge-logs-es"},
+            "query": "EdgeResponseStatus:[400 TO 499]",
+            "timeField": "@timestamp",
+            "metrics": [{"id": "1", "type": "count"}],
+            "bucketAggs": [{"id": "2", "type": "date_histogram", "field": "@timestamp", "settings": {"interval": "1m", "min_doc_count": "0"}}]
+          },
+          {
+            "refId": "C",
+            "alias": "5xx",
+            "datasource": {"type": "elasticsearch", "uid": "edge-logs-es"},
+            "query": "EdgeResponseStatus:[500 TO 599]",
+            "timeField": "@timestamp",
+            "metrics": [{"id": "1", "type": "count"}],
+            "bucketAggs": [{"id": "2", "type": "date_histogram", "field": "@timestamp", "settings": {"interval": "1m", "min_doc_count": "0"}}]
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "type": "timeseries",
+        "title": "Consumer Lag",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 9},
+        "datasource": {"type": "prometheus", "uid": "prometheus-primary"},
+        "targets": [
+          {
+            "refId": "A",
+            "expr": "sum(kafka_consumergroup_lag{consumergroup=~\".*edge.*|.*investigation.*\"})",
+            "legendFormat": "lag"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "type": "timeseries",
+        "title": "Elasticsearch Write Pressure",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 9},
+        "datasource": {"type": "prometheus", "uid": "prometheus-primary"},
+        "targets": [
+          {
+            "refId": "A",
+            "expr": "sum(elasticsearch_thread_pool_write_queue)",
+            "legendFormat": "write queue"
+          },
+          {
+            "refId": "B",
+            "expr": "sum(elasticsearch_thread_pool_write_rejected_count)",
+            "legendFormat": "write rejected total"
+          }
+        ]
+      }
+    ]
+  }
+}

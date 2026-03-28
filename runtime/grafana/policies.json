@@ -1,0 +1,23 @@
+{
+  "receiver": "default-email",
+  "group_by": ["grafana_folder", "alertname"],
+  "routes": [
+    {
+      "receiver": "platform-notifications",
+      "group_by": ["..."],
+      "matchers": ["grafana_folder=\"Platform Signals\""],
+      "group_wait": "30s",
+      "group_interval": "5m",
+      "repeat_interval": "15m"
+    },
+    {
+      "receiver": "investigation-webhook",
+      "group_by": ["..."],
+      "matchers": ["grafana_folder=\"Investigation Signals\""],
+      "group_wait": "30s",
+      "group_interval": "5m",
+      "repeat_interval": "15m"
+    }
+  ],
+  "provenance": "api"
+}

@@ -1,0 +1,16 @@
+[
+  {
+    "index": "edge-logs-000001",
+    "body": {
+      "aliases": {
+        "edge-logs": {
+          "is_write_index": true
+        }
+      }
+    }
+  },
+  {
+    "index": "investigation-results-v1",
+    "body": {}
+  }
+]

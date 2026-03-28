@@ -1,0 +1,19 @@
+{
+  "name": "investigation-results",
+  "uid": "investigation-results-es",
+  "type": "elasticsearch",
+  "access": "proxy",
+  "url": "https://search-stack-es-http.observability.svc.cluster.local:9200",
+  "basicAuth": true,
+  "basicAuthUser": "investigation_service",
+  "jsonData": {
+    "index": "investigation-results-v1",
+    "timeField": "processed_at",
+    "includeFrozen": false,
+    "maxConcurrentShardRequests": 5,
+    "tlsSkipVerify": true
+  },
+  "secureJsonData": {
+    "basicAuthPassword": "<ELASTICSEARCH_PASSWORD>"
+  }
+}

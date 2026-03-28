@@ -1,0 +1,37 @@
+[
+  {
+    "uid": "",
+    "name": "default-email",
+    "type": "email",
+    "settings": {
+      "addresses": "alerts@example.invalid"
+    },
+    "disableResolveMessage": false
+  },
+  {
+    "uid": "platform-slack",
+    "name": "platform-notifications",
+    "type": "slack",
+    "settings": {
+      "text": "{{ template \"default.message\" . }}",
+      "title": "{{ template \"default.title\" . }}",
+      "url": "${GRAFANA_PRIMARY_ALERTS_SLACK_WEBHOOK_URL}"
+    },
+    "disableResolveMessage": false,
+    "provenance": "api"
+  },
+  {
+    "uid": "investigation-webhook",
+    "name": "investigation-webhook",
+    "type": "webhook",
+    "settings": {
+      "authorization_credentials": "${INVESTIGATION_GRAFANA_WEBHOOK_BEARER}",
+      "authorization_scheme": "Bearer",
+      "httpMethod": "POST",
+      "maxAlerts": 0,
+      "url": "http://investigation-ops-api.investigations.svc.cluster.local:8080/webhooks/grafana"
+    },
+    "disableResolveMessage": false,
+    "provenance": "api"
+  }
+]

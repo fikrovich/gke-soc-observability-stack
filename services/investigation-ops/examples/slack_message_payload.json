@@ -1,0 +1,40 @@
+{
+  "text": "[critical] Request Volume Anomaly (generic_triage, confidence=0.71)",
+  "blocks": [
+    {
+      "type": "header",
+      "text": {
+        "type": "plain_text",
+        "text": "Investigation Summary"
+      }
+    },
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "*Incident:* `d7dcd2b7f481ab69fa65`\n*Alert:* Request Volume Anomaly\n*Hypothesis:* generic_triage\n*Confidence:* 0.71"
+      }
+    },
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "*Evidence*\n- Request volume is 9.00x baseline (900 vs 100.0).\n- Path concentration is high on /critical-path at 77.78%.\n- Security action concentration is high on challenge at 35.56%."
+      }
+    },
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "*Suspicious entities*\n- client_ip: 203.0.113.10 (450, 50.00%)\n- path: /critical-path (700, 77.78%)"
+      }
+    },
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "*Next queries*\n- Investigate the dominant entity cluster: `ClientIP.keyword:\"203.0.113.10\" and ClientRequestPath.keyword:\"/critical-path\"`"
+      }
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "policy": {
+    "_meta": {
+      "description": "Retention policy for investigation result documents",
+      "managed_by": "investigation-ops"
+    },
+    "phases": {
+      "hot": {
+        "actions": {
+          "set_priority": {
+            "priority": 100
+          }
+        }
+      },
+      "delete": {
+        "min_age": "30d",
+        "actions": {
+          "delete": {
+            "delete_searchable_snapshot": true
+          }
+        }
+      }
+    }
+  }
+}

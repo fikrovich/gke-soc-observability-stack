@@ -1,0 +1,25 @@
+{
+  "index_patterns": [
+    "edge-logs-*"
+  ],
+  "template": {
+    "settings": {
+      "index": {
+        "lifecycle": {
+          "name": "edge-logs-policy",
+          "rollover_alias": "edge-logs"
+        },
+        "routing": {
+          "allocation": {
+            "total_shards_per_node": "2"
+          }
+        },
+        "refresh_interval": "60s",
+        "number_of_shards": "1",
+        "number_of_replicas": "1"
+      }
+    }
+  },
+  "composed_of": [],
+  "priority": 200
+}

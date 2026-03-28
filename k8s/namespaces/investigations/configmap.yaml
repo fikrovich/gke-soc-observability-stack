@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: investigation-ops-config
+  namespace: investigations
+data:
+  API_HOST: "0.0.0.0"
+  API_PORT: "8080"
+  DEFAULT_BASELINE_WINDOWS: "6"
+  DEFAULT_WINDOW_LOOKAHEAD_MINUTES: "15"
+  DEFAULT_WINDOW_LOOKBACK_MINUTES: "15"
+  ELASTICSEARCH_CA_CERT_PATH: "/var/run/secrets/elastic/tls.crt"
+  ELASTICSEARCH_INDEX_ALIAS: "edge-logs"
+  ELASTICSEARCH_URL: "https://search-stack-es-http.observability:9200"
+  ENVIRONMENT: "production"
+  INVESTIGATION_CONSUMER_GROUP: "investigation-ops-worker"
+  INVESTIGATION_JOB_TOPIC: "investigations"
+  KAFKA_BOOTSTRAP_SERVERS: '["kafka.kafka.svc.cluster.local:9092"]'
+  KAFKA_CLIENT_ID: "investigation-ops"
+  LOG_LEVEL: "INFO"
+  MAX_TERMS_BUCKET_SIZE: "10"
+  PLAYBOOK_DIR: "/app/config/playbooks"
+  RESULT_INDEX: "investigation-results-v1"
+  RETRY_ATTEMPTS: "3"
+  RETRY_BACKOFF_SECONDS: "1.0"
+  SERVICE_NAME: "investigation-ops"
+  WORKER_HOST: "0.0.0.0"
+  WORKER_PORT: "8080"

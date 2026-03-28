@@ -1,0 +1,151 @@
+{
+  "playbook_id": "request_volume_anomaly",
+  "index_alias": "edge-logs",
+  "alert_query": {
+    "size": 0,
+    "track_total_hits": true,
+    "query": {
+      "bool": {
+        "filter": [
+          {
+            "wildcard": {
+              "ClientRequestPath.keyword": {
+                "value": "/critical-path*"
+              }
+            }
+          },
+          {
+            "range": {
+              "@timestamp": {
+                "gte": "2026-03-14T09:45:00Z",
+                "lt": "2026-03-14T10:15:00Z"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "aggs": {
+      "top_ips": {
+        "terms": {
+          "field": "ClientIP.keyword",
+          "size": 10
+        }
+      },
+      "top_asns": {
+        "terms": {
+          "field": "ClientASN",
+          "size": 10
+        }
+      },
+      "top_user_agents": {
+        "terms": {
+          "field": "ClientRequestUserAgent.keyword",
+          "size": 10
+        }
+      },
+      "response_status": {
+        "terms": {
+          "field": "EdgeResponseStatus",
+          "size": 10
+        }
+      },
+      "security_actions": {
+        "terms": {
+          "field": "SecurityAction.keyword",
+          "size": 10
+        }
+      },
+      "security_rules": {
+        "terms": {
+          "field": "SecurityRuleDescription.keyword",
+          "size": 10
+        }
+      },
+      "top_paths": {
+        "terms": {
+          "field": "ClientRequestPath.keyword",
+          "size": 10
+        }
+      },
+      "top_devices": {
+        "terms": {
+          "field": "RequestHeaders.device-uid.keyword",
+          "size": 10
+        }
+      },
+      "accounts_per_ip": {
+        "terms": {
+          "field": "ClientIP.keyword",
+          "size": 10
+        },
+        "aggs": {
+          "unique_values": {
+            "cardinality": {
+              "field": "RequestHeaders.account-id.keyword"
+            }
+          }
+        }
+      },
+      "devices_per_account": {
+        "terms": {
+          "field": "RequestHeaders.account-id.keyword",
+          "size": 10
+        },
+        "aggs": {
+          "unique_values": {
+            "cardinality": {
+              "field": "RequestHeaders.device-uid.keyword"
+            }
+          }
+        }
+      },
+      "top_client_hints": {
+        "terms": {
+          "field": "RequestHeaders.client-id.keyword",
+          "size": 10
+        }
+      },
+      "top_sessions": {
+        "terms": {
+          "field": "RequestHeaders.session-id.keyword",
+          "size": 10
+        }
+      }
+    }
+  },
+  "baseline_query": {
+    "size": 0,
+    "track_total_hits": true,
+    "query": {
+      "bool": {
+        "filter": [
+          {
+            "wildcard": {
+              "ClientRequestPath.keyword": {
+                "value": "/critical-path*"
+              }
+            }
+          },
+          {
+            "range": {
+              "@timestamp": {
+                "gte": "2026-03-14T08:15:00Z",
+                "lt": "2026-03-14T09:45:00Z"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "aggs": {
+      "requests_over_time": {
+        "date_histogram": {
+          "field": "@timestamp",
+          "fixed_interval": "15m",
+          "min_doc_count": 0
+        }
+      }
+    }
+  }
+}
